@@ -1,0 +1,32 @@
+---
+# tasks file for app configuration
+
+# Cloning from Source Sabnzbd repo and
+# Ensure perms are cool
+- name: Clone git repo
+  git:
+    repo: "{{ sabnzbd_git_url }}"
+    dest: "{{ sabnzbd_install_dir }}"
+    version: master
+
+- name: Update file perms
+  file:
+    path: "{{ sabnzbd_install_dir }}"
+    owner: "{{ sabnzbd_user }}"
+    group: "{{ sabnzbd_group }}"
+    recurse: yes
+
+# We gots PIP requirements so lets install them
+- name: Install pip requirements
+  pip:
+    requirements: "{{ sabnzbd_install_dir }}/requirements.txt"
+    executable: pip{{ python_version }}
+
+# Create data config directory
+- name: Ensure Config dir is created
+  file:
+    name: "{{ sabnzbd_config_dir }}"
+    owner: "{{ sabnzbd_user }}"
+    group: "{{ sabnzbd_group }}"
+    mode: 0775
+    state: directory

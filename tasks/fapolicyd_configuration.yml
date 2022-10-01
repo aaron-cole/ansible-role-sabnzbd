@@ -1,0 +1,23 @@
+---
+# tasks for fapolicyd configuration
+
+#gotta do extra stuff if fapolicyd is installed
+- name: fapolicyd stuff
+  block:
+    - name: Trust SABnzbd.py
+      shell: "fapolicyd-cli --file add {{ sabnzbd_install_dir }}/SABnzbd.py --trust-file sabnzbd"
+      changed_when: false
+      failed_when: false
+      notify: fapolicyd update
+      
+    - name: Trust Pip items
+      shell: "fapolicyd-cli --file add /usr/local/lib64/python{{ python_version }}/site-packages --trust-file sabnzbd"
+      changed_when: false
+      failed_when: false
+      notify: fapolicyd update
+      
+  when: "'fapolicyd' in ansible_facts['packages']"
+
+# Gotta flush handlers to make sure fapolicyd gets updated
+- name: Flush handlers to make Sabnzbd work with fapolicy
+  meta: flush_handlers

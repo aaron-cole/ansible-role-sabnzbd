@@ -1,0 +1,51 @@
+---
+# Add EPEL GPG key
+# Add EPEL repo
+# install python should be >3.7
+- name: For RHEL Servers
+  block:
+  - name: Add EPEL RPM key
+    rpm_key:
+      state: present
+      key: "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-{{ ansible_facts['distribution_major_version'] }}"
+
+  - name: Add EPEL Repository
+    yum:
+      name: "https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_facts['distribution_major_version'] }}.noarch.rpm"
+      state: present
+
+  - name: Python >3.7 installation
+    yum:
+      name: "{{ sabnzbd_python_version }}"
+      state: present
+    when: ansible_facts['distribution_major_version'] >= '8'
+
+  when: ansible_distribution == 'RedHat'
+
+# NON RHEL servers can just install this package
+- name: Install native epel-release rpm  Non-RHEL Servers
+  yum:
+    name: epel-release
+    state: present
+  when: ansible_distribution != 'RedHat'
+
+# Gotta have the NUXREF repo
+# Set some facts depending on version
+# then install the rpm 
+# probably should move the var out though
+- name: NUXREF repo stuff
+  block:
+  - name: Set fact for install of NUXREF rpm on el7
+    set_fact:
+      sabnzbd_nuxref_repo: "https://repo.nuxref.com/centos/7/en/x86_64/custom/nuxref-release-1.0.0-4.el7.nuxref.noarch.rpm"
+    when: ansible_facts['distribution_major_version'] == '7'
+
+  - name: Set fact for install of NUXREF rpm on el8
+    set_fact:
+      sabnzbd_nuxref_repo: "https://repo.nuxref.com/centos/8/en/x86_64/custom/nuxref-release-1.0.0-5.el8.nuxref.noarch.rpm"
+    when: ansible_facts['distribution_major_version'] == '8'
+
+  - name: Install NUXREF rpm
+    yum:
+      name: "{{ sabnzbd_nuxref_repo }}"
+      disable_gpg_check: yes

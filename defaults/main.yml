@@ -1,0 +1,22 @@
+---
+# defaults file for sabnzbd
+
+sabnzbd_user: sabnzbd
+# sabnzbd_uid:
+sabnzbd_group: media
+# sabnzbd_group_gid:
+sabnzbd_install_dir: /opt/sabnzbd
+sabnzbd_config_dir: /opt/data/sabnzbd
+sabnzbd_git_url: "https://github.com/sabnzbd/sabnzbd"
+sabnzbd_port: 8080
+sabnzbd_python_version: python38
+sabnzbd_packages:
+  - git
+  - par2cmdline
+  - python3-sabyenc
+  - python3-cheetah
+  - unrar
+  - unzip
+  - python3-setuptools
+  - python3-pip
+  - python3-devel

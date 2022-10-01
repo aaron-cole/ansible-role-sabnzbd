@@ -1,0 +1,24 @@
+---
+# user group tasks for sabnzbd
+
+# Create group to use for user
+- name: Create usenet group if defined
+  group:
+    name: "{{ sabnzbd_group }}"
+    gid: "{{ sabnzbd_group_gid | default(omit) }}"
+    state: present
+    system: yes
+  when: sabnzbd_group is defined
+
+# Create our user we will use
+- name: Create sabnzbd user
+  user:
+    name: "{{ sabnzbd_user }}"
+    state: present
+    shell: /sbin/nologin
+    group: "{{ sabnzbd_group }}"
+    system: yes
+    home: "{{ sabnzbd_install_dir }}"
+    comment: "sabnzbd service account"
+    uid: "{{ sabnzbd_uid | default(omit) }}"
+    create_home: no

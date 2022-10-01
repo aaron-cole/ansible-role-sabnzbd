@@ -1,0 +1,7 @@
+---
+# tasks file for package installation
+
+- name: Install preqreqs
+  yum:
+    name: "{{ sabnzbd_packages }}"
+    state: present

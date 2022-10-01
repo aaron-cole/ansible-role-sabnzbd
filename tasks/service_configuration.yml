@@ -1,0 +1,18 @@
+---
+# tasks file for service configuration
+
+# Configure and Start Systemd service
+- name: Copy Systemd service template
+  template:
+    src: systemd_sabnzbd.service.j2
+    dest: /etc/systemd/system/sabnzbd.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Start sabnzbd service
+  systemd:
+    state: started
+    enabled: yes
+    name: sabnzbd.service
+    daemon_reload: yes

@@ -1,0 +1,44 @@
+---
+# tasks file for sabnzbd
+
+# Only need to see if fapolicyd is installed
+# Better safe than sorry
+- name: Gather Package Facts
+  package_facts:
+    manager: auto
+
+# Gotta break down our python version
+# So we can reuse it for our vars
+# like in pip and fapolicyd
+- name: Vars for future use
+  block:
+    - name: Remove "python" from sabnzbd_python_version and define new fact
+      set_fact:
+        test: "{{ sabnzbd_python_version | regex_replace('^python(.*)$', '\\1') }}"
+    
+    - name: Setting python version with a "." in between
+      set_fact:
+        python_version: "{{ test | first }}.{{ test | last }}"
+      when: test | length == 2
+
+- name: User Group Creation tasks
+  include_tasks: "user_group_creation.yml"
+
+- name: Repository Setup
+  include_tasks: "repo_setups.yml"
+
+- name: Install packages
+  include_tasks: "install_packages.yml"
+
+- name: Sabnzbd setup and Configuration
+  include_tasks: "app_configuration.yml"
+  
+- name: firewall tasks
+  include_tasks: "firewall_configuration.yml"
+
+- name: fapolicyd tasks
+  include_tasks: "fapolicyd_configuration.yml"
+
+- name: Service Configuration Tasks
+  include_tasks: "service_configuration.yml"
+        
